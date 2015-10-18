@@ -29,7 +29,7 @@ function chiro.create(config)
   self.animationStateData = spine.AnimationStateData.new(self.skeletonData)
   self.animationState = spine.AnimationState.new(self.animationStateData)
 
-	self.skeleton:setToSetupPose()
+  self.skeleton:setToSetupPose()
 
   for name, state in pairs(self.states) do
     state.name = name
