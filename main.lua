@@ -13,10 +13,10 @@ animation = chiro.create({
 })
 
 function love.update(delta)
-	animation:update(delta)
+  animation:update(delta)
 end
 
 function love.draw()
   love.graphics.setColor(255, 255, 255)
-	animation:draw(400, 600)
+  animation:draw(400, 600)
 end
