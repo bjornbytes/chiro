@@ -53,7 +53,7 @@ Advanced
 ---
 
 To create a chiro animation, call `chiro.create(options)`.  Chiro needs to know where the JSON
-file and images folder, which can be specified in one of two ways:
+file and images folder are, which can be specified in one of two ways:
 
 - Pass a `dir` option with the name of a folder that has an `images` subdirectory and a JSON file
   with the same name as the directory.
