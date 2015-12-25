@@ -3,7 +3,7 @@ Chiro
 
 A library that makes it easier to work with spine animations in LÖVE games.
 
-Usage
+Example
 ---
 
 If your project looks like this:
@@ -52,13 +52,18 @@ end
 Advanced
 ---
 
-Documentation coming soon, but here is a table containing all the options you can set:
+To create a chiro animation, call `chiro.create(options)`.  You'll need to specify where the JSON
+file and images folder is located in one of two ways:
+
+- Specify an `images` option that contains the path to the folder containing the images, as well as
+  a `json` option that contains the path to the JSON file.
+- Specify a `dir` option that contains both an `images` folder and a JSON file named the same as the
+  directory.
+
+Here are the other optional options that can be customized:
 
 ```lua
-chiro.create({
-  dir = 'path/to/animation', -- must contain 'animation.json' and an 'images' directory
-  images = 'path/to/images', -- images directory, if not using dir option
-  json = 'path/to/json.json', -- json file, if not using dir option
+local animation = chiro.create({
   scale = 1, -- base scale of animation
   flip = false, -- flip animation along the x axis
   flip = { -- can also flip both x and y
@@ -82,22 +87,65 @@ chiro.create({
     }
   },
   on = {
-    <eventName> = function(animation, event)
-
-    end,
-    start = function(animation, state)
-
-    end,
-    complete = function(animation, state)
-
-    end,
-    ['end'] = function(animation, state)
-
-    end
+    <eventName> = function(animation, event) end,
+    start       = function(animation, state) end,
+    complete    = function(animation, state) end,
+    ['end']     = function(animation, state) end
   },
   default = <animationName> -- immediately start playing this animation
 })
 ```
+
+An animation should be updated to play through the tracks and set the bones in the right position.
+To do this, call the `update` function on the chiro animation:
+
+```lua
+function love.update(dt)
+  animation:update(dt)
+end
+```
+
+`dt` is the number of seconds elapsed since the last call to `update`.
+
+To draw the animation to the screen, call `draw`:
+
+```lua
+function love.draw()
+  animation:draw(x, y)
+end
+```
+
+`x` and `y` are optional.  You can also set the `x` and `y` options on the animation directly:
+
+```lua
+animation.x = 100
+animation.y = 100
+```
+
+To play a specific animation, you can use `set`:
+
+```lua
+animation:set('walk') -- Play the walk animation
+```
+
+The animation will play using the settings defined in the `states` part of the config for that
+animation.  This can be used to control speed, looping, tracks, and can also be used to transition
+to another animation after the current one is finished playing.
+
+To reset things, you can call `clear` on the animation to clear all animation tracks, or `resetTo`
+to clear all tracks and begin playing an animation.
+
+To hook into events for the animation, specify functions for keys in the `on` section of the config.
+`start`, `complete`, and `end` will be passed the animation object and the state object as
+arguments.
+
+Chiro also exposes most of the underlying Spine objects as properties on the animation object:
+
+- `skeletonJson`
+- `skeletonData`
+- `skeleton`
+- `animationStateData`
+- `animationState`
 
 License
 ---
