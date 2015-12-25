@@ -52,13 +52,13 @@ end
 Advanced
 ---
 
-To create a chiro animation, call `chiro.create(options)`.  You'll need to specify where the JSON
-file and images folder is located in one of two ways:
+To create a chiro animation, call `chiro.create(options)`.  Chiro needs to know where the JSON
+file and images folder, which can be specified in one of two ways:
 
-- Specify an `images` option that contains the path to the folder containing the images, as well as
-  a `json` option that contains the path to the JSON file.
-- Specify a `dir` option that contains both an `images` folder and a JSON file named the same as the
-  directory.
+- Pass a `dir` option with the name of a folder that has an `images` subdirectory and a JSON file
+  with the same name as the directory.
+- Pass the two options separately: a path to the folder containing the images (`images`) and a path
+  to the JSON file (`json`).
 
 Here are the other optional options that can be customized:
 
@@ -115,14 +115,14 @@ function love.draw()
 end
 ```
 
-`x` and `y` are optional.  You can also set the `x` and `y` options on the animation directly:
+`x` and `y` are optional.  They can also be set on the animation directly:
 
 ```lua
 animation.x = 100
 animation.y = 100
 ```
 
-To play a specific animation, you can use `set`:
+Use `set` to play a specific animation:
 
 ```lua
 animation:set('walk') -- Play the walk animation
@@ -132,7 +132,7 @@ The animation will play using the settings defined in the `states` part of the c
 animation.  This can be used to control speed, looping, tracks, and can also be used to transition
 to another animation after the current one is finished playing.
 
-To reset things, you can call `clear` on the animation to clear all animation tracks, or `resetTo`
+To reset things, call `clear` on the animation to clear all animation tracks, or `resetTo(name)`
 to clear all tracks and begin playing an animation.
 
 To hook into events for the animation, specify functions for keys in the `on` section of the config.
