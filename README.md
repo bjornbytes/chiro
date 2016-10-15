@@ -1,7 +1,8 @@
 Chiro
 ===
 
-A library that makes it easier to work with spine animations in LÖVE games.
+A library that makes it easier to work with [Spine](http://esotericsoftware.com/) animations in LÖVE
+games.
 
 Example
 ---
