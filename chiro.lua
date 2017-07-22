@@ -4,12 +4,16 @@ chiro.__index = chiro
 function chiro.create(config)
   local self = setmetatable(config, chiro)
 
+  local name = self.dir:match('[^%/]+$')
+
   if self.dir then
-    self.images = self.images or (self.dir .. '/images')
-    self.json = self.json or (self.dir .. '/' .. self.dir:match('[^%/]+$') .. '.json')
+    self.json = self.json or (self.dir .. '/' .. name .. '.json')
   end
 
-  self.skeletonJson = spine.SkeletonJson.new()
+  local loader = function (path) return love.graphics.newImage(self.dir .. '/' .. path) end
+  local atlas = spine.TextureAtlas.new(spine.utils.readFile(self.dir .. '/' .. name .. ".atlas"), loader)
+
+  self.skeletonJson = spine.SkeletonJson.new(spine.AtlasAttachmentLoader.new(atlas))
   self.skeletonJson.scale = self.scale or 1
 
   if type(self.json) == 'table' then
@@ -19,12 +23,6 @@ function chiro.create(config)
   end
 
   self.skeleton = spine.Skeleton.new(self.skeletonData)
-
-  self.skeleton.createImage = function(_, attachment)
-    return type(self.images) == 'string' and
-      love.graphics.newImage(self.images .. '/' .. attachment.name .. '.png') or
-      self.images[attachment.name]
-  end
 
   self.animationStateData = spine.AnimationStateData.new(self.skeletonData)
   self.animationState = spine.AnimationState.new(self.animationStateData)
@@ -37,8 +35,8 @@ function chiro.create(config)
 
   self.on = self.on or {}
 
-  self.animationState.onStart = function(track)
-    local name = self.animationState.tracks[track].animation.name
+  self.animationState.onStart = function(entry)
+    local name = entry.animation.name
     local state = self.states[name]
     if state and self.on.start then
       self.on.start(self, state)
@@ -52,8 +50,8 @@ function chiro.create(config)
     end
   end
 
-  self.animationState.onEnd = function(track)
-    local name = self.animationState.tracks[track].animation.name
+  self.animationState.onEnd = function(entry)
+    local name = entry.animation.name
     local state = self.states[name]
     if state then
       if self.on['end'] then
@@ -66,8 +64,8 @@ function chiro.create(config)
     end
   end
 
-  self.animationState.onComplete = function(track)
-    local name = self.animationState.tracks[track].animation.name
+  self.animationState.onComplete = function(entry)
+    local name = entry.animation.name
     local state = self.states[name]
     if state and self.on.complete then
       self.on.complete(self, state)
@@ -75,6 +73,8 @@ function chiro.create(config)
   end
 
   self:resetTo(self.default)
+
+  self.skeletonRenderer = spine.SkeletonRenderer.new(true)
 
   return self
 end
@@ -85,23 +85,23 @@ function chiro:draw(x, y)
   local skeleton = self.skeleton
   skeleton.x, skeleton.y = x, y
   skeleton.flipX = self.flip and (type(self.flip) == 'table' and self.flip.x or self.flip) or false
-  skeleton.flipY = type(self.flip) == 'table' and self.flip.y or false
+  skeleton.flipY = type(self.flip) == 'table' and self.flip.y or true
   skeleton:updateWorldTransform()
-  skeleton:draw()
+  self.skeletonRenderer:draw(skeleton)
 end
 
 function chiro:update(delta)
   self.animationState.timeScale = self.speed or 1
-  for i = 0, self.animationState.trackCount do
-    local track = self.animationState.tracks[i]
+  print(self.animationState)
+  for _, track in ipairs(self.animationState.tracks) do
     if track then
       local animation = track.animation
       local state = self.states[animation.name]
       if state.length then
         local speed = animation.duration / state.length
-        self.animationState.tracks[i].timeScale = speed
+        track.timeScale = speed
       else
-        self.animationState.tracks[i].timeScale = state.speed or 1
+        track.timeScale = state.speed or 1
       end
     end
   end
