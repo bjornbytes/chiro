@@ -92,7 +92,6 @@ end
 
 function chiro:update(delta)
   self.animationState.timeScale = self.speed or 1
-  print(self.animationState)
   for _, track in ipairs(self.animationState.tracks) do
     if track then
       local animation = track.animation
