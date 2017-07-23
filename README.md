@@ -16,11 +16,9 @@ If your project looks like this:
 ├── spine-lua
 └── spineboy
     ├── spineboy.json
-    └── images
-        ├── head.png
-        ├── neck.png
-        ├── ...
-        └── etc.
+    ├── spineboy.atlas
+    └── spineboy.png
+
 ```
 
 Then you can get up and running quickly by doing this in `main.lua`:
@@ -54,12 +52,8 @@ Advanced
 ---
 
 To create a chiro animation, call `chiro.create(options)`.  Chiro needs to know where the JSON
-file and images folder are, which can be specified in one of two ways:
-
-- Pass a `dir` option with the name of a folder that has an `images` subdirectory and a JSON file
-  with the same name as the directory.
-- Pass the two options separately: a path to the folder containing the images (`images`) and a path
-  to the JSON file (`json`).
+file and images folder are, which can be specified using the `dir` option.  This should point to
+a directory containing a JSON file, an atlas, and a png file, all named the same as the directory.
 
 Here are the other optional options that can be customized:
 
@@ -144,6 +138,7 @@ Chiro also exposes most of the underlying Spine objects as properties on the ani
 
 - `skeletonJson`
 - `skeletonData`
+- `skeletonRenderer`
 - `skeleton`
 - `animationStateData`
 - `animationState`
