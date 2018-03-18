@@ -84,8 +84,13 @@ function chiro:draw(x, y)
   y = (y or self.y or 0) + (self.offset and self.offset.y or 0)
   local skeleton = self.skeleton
   skeleton.x, skeleton.y = x, y
-  skeleton.flipX = self.flip and (type(self.flip) == 'table' and self.flip.x or self.flip) or false
-  skeleton.flipY = type(self.flip) == 'table' and self.flip.y or true
+  if type(self.flip) == 'table' then
+    skeleton.flipX = self.flip.x
+    skeleton.flipY = not self.flip.y
+  else
+    skeleton.flipX = self.flip
+    skeleton.flipY = true
+  end
   skeleton:updateWorldTransform()
   self.skeletonRenderer:draw(skeleton)
 end
